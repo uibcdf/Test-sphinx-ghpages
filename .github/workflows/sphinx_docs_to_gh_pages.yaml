@@ -42,6 +42,15 @@ jobs:
           micromamba info
           micromamba list
 
+      - name: Test import module
+        shell: bash -l {0}
+        run: |
+          echo "::group::Importing module from home directory"
+          cd
+          pwd
+          echo 'import molsysmt; print("Version of the package: {}".format(molsysmt.__version__))' | python
+          echo "::endgroup::"
+
       - name: Running the Sphinx to gh-pages Action
         uses: uibcdf/action-sphinx-docs-to-gh-pages@v2.0.0
 
