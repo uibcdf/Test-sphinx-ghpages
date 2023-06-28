@@ -1,0 +1,213 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%load_ext autoreload\n",
+    "%autoreload 2\n",
+    "#%matplotlib widget\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import molsysmt as msm\n",
+    "import nglview as nv\n",
+    "#import warnings\n",
+    "#warnings.filterwarnings('ignore')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Working with NGLView"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "molecular_system = msm.convert([nv.datafiles.GRO, nv.datafiles.XTC], to_form='molsysmt.MolSys')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nv.show_molsysmt(molecular_system)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "view = msm.view(molecular_system, standard=True)\n",
+    "view"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "contact_map = msm.structure.get_contacts(view, selection='molecule_type==\"protein\" and atom_name==\"CA\"', threshold='12 angstroms')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "CA_labels = msm.get_label(view, selection='molecule_type==\"protein\" and atom_name==\"CA\"', string='{group_name}-{group_id}')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print(CA_labels[100])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import plotly.express as px\n",
+    "\n",
+    "fig = px.imshow(~contact_map, animation_frame=0, binary_string=True, height=600, origin='lower')\n",
+    "\n",
+    "fig.update_layout(\n",
+    "    xaxis = dict(\n",
+    "        tickmode = 'array',\n",
+    "        tickvals = list(range(0,contact_map.shape[1],25)),\n",
+    "        ticktext = CA_labels[::25],\n",
+    "        tickangle = 45\n",
+    "    ),\n",
+    "    yaxis = dict(\n",
+    "        tickmode = 'array',\n",
+    "        tickvals = list(range(0,contact_map.shape[1],25)),\n",
+    "        ticktext = CA_labels[::25],\n",
+    "        tickangle = 45\n",
+    "    )\n",
+    ")\n",
+    "\n",
+    "fig.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "msm.convert(view, to_form='string:aminoacids3')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "molsys_A = msm.build.build_peptide('AceAlaNME')\n",
+    "molsys_B = msm.structure.translate(molsys_A, translation='[0.5, 0.0, 0.0] nm')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "view1 = msm.convert(molsys_A, to_form='nglview.NGLWidget')\n",
+    "view2 = msm.view(molsys_B)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "view = msm.merge([view1, view2])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "msm.info(view)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "msm.structure.get_geometric_center(view, selection='molecule_index==0')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "msm.structure.get_geometric_center(view, selection='molecule_index==1')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "msm.structure.get_distances(view, selection='molecule_index==0', selection_2='molecule_index==1',\n",
+    "                            group_behavior='geometric center', group_behavior_2='geometric center')"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.12"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
