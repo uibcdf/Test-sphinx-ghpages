@@ -1,0 +1,18 @@
+docs:
+  channels:
+    - uibcdf
+    - conda-forge
+    - defaults
+  dependencies:
+    - jupyterlab
+    - sphinx
+    - pydata-sphinx-theme
+    - sphinxcontrib-bibtex
+    - sphinx-remove-toctrees
+    - sphinx-copybutton
+    - sphinx-design
+    - sphinx-favicon
+    - myst-nb
+    - plotly
+    - molsysmt
+
