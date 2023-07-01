@@ -59,8 +59,10 @@ extensions = [
     'sphinx_design',
     'sphinx_favicon',
     'myst_nb',
+    'sphinx_tabs.tabs', # do not move from the last position
     # 'nbsphinx', # for local testing instead of myst_nb
 ]
+
 
 # Myst extensions and options
 
@@ -192,7 +194,6 @@ html_context = {
 html_css_files = [
     'custom.css',
 ]
-
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
